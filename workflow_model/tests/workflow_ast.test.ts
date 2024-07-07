@@ -1,9 +1,6 @@
-import {
-  assertEquals,
-  assertInstanceOf,
-} from "https://deno.land/std@0.224.0/assert/mod.ts";
-import { describe, it } from "https://deno.land/std@0.224.0/testing/bdd.ts";
-import { join } from "https://deno.land/std@0.221.0/path/mod.ts";
+import { assertEquals, assertInstanceOf } from "@std/assert";
+import { describe, it } from "@std/testing/bdd";
+import { join } from "@std/path";
 import { JobAst, StepAst, WorkflowAst } from "../src/workflow_ast.ts";
 
 describe("workflow_ast.yaml", () => {
