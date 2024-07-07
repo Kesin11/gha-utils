@@ -4,7 +4,7 @@ import {
   describe,
   it,
 } from "https://deno.land/std@0.224.0/testing/bdd.ts";
-import { Github } from "./github.ts";
+import { Github } from "./api_client.ts";
 
 describe(Github.name, () => {
   describe("Set token at constructor", () => {
