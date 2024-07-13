@@ -1,6 +1,6 @@
 import { assertEquals } from "@std/assert";
 import { beforeEach, describe, it } from "@std/testing/bdd";
-import { Github } from "./api_client.ts";
+import { Github } from "./mod.ts";
 
 describe(Github.name, () => {
   describe("Set token at constructor", () => {

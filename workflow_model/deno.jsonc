@@ -1,0 +1,11 @@
+{
+  "name": "@kesin11/gha-utils-workflow-model",
+  "version": "0.1.0",
+  "exports": "./mod.ts",
+  "tasks": {
+    "dev": "deno test --watch mod.ts"
+  }
+  // "imports": {
+  //   "gha-utils/api-client": "../api_client/mod.ts"
+  // }
+}

@@ -4,6 +4,15 @@
   "fmt": {
     "proseWrap": "preserve"
   },
+  "workspace": [
+    "./api_client",
+    "./workflow_model"
+  ],
+  "exclude": [
+    ".github",
+    ".git",
+    ".vscode"
+  ],
   "imports": {
     "@octokit/plugin-retry": "npm:@octokit/plugin-retry@^7.1.1",
     "@octokit/plugin-throttling": "npm:@octokit/plugin-throttling@^9.3.0",
