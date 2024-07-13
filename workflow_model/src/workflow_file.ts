@@ -45,6 +45,30 @@ export class WorkflowModel {
   }
 }
 
+type ReusableWorkflow = {
+  name: string;
+  on: {
+    workflow_call: unknown;
+  };
+  jobs: Record<string, Job>;
+};
+export class ReusableWorkflowModel {
+  fileContent: FileContent;
+  raw: ReusableWorkflow;
+  ast: WorkflowAst; // NOTE: it's fake ast
+  constructor(fileContent: FileContent) {
+    this.fileContent = fileContent;
+    this.ast = new WorkflowAst(fileContent.content);
+    this.raw = parse(fileContent.content) as ReusableWorkflow;
+  }
+
+  get jobs(): JobModel[] {
+    return zip(Object.entries(this.raw.jobs), this.ast.jobAsts()).map(
+      ([[id, job], jobAst]) => new JobModel(id, job, this.fileContent, jobAst),
+    );
+  }
+}
+
 export type Job = {
   name?: string;
   "runs-on": string;
@@ -134,6 +158,31 @@ export class JobModel {
   }
 }
 
+type CompositeAction = {
+  name: string;
+  description: string | undefined;
+  runs: {
+    using: "composite";
+    steps: Step[];
+  };
+};
+export class CompositeStepModel {
+  fileContent: FileContent;
+  raw: CompositeAction;
+  ast: StepAst; // NOTE: it's fake ast
+  constructor(fileContent: FileContent, fakeAst: StepAst) {
+    this.fileContent = fileContent;
+    this.raw = parse(fileContent.content) as CompositeAction;
+    this.ast = fakeAst;
+  }
+
+  get steps(): StepModel[] {
+    return this.raw.runs.steps.map((step) =>
+      new StepModel(step, this.fileContent, this.ast)
+    );
+  }
+}
+
 export type Step = {
   uses?: string;
   name?: string;
@@ -170,6 +219,11 @@ export class StepModel {
 
   get htmlUrlWithLine(): string {
     return `${this.htmlUrl}#L${this.startLine}`;
+  }
+
+  get showable(): string {
+    return this.raw.name ?? this.raw.uses ?? this.raw.run ??
+      "Error: Not showable step";
   }
 
   static match(
