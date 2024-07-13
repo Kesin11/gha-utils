@@ -1,4 +1,12 @@
 {
+  "name": "@kesin11/gha-utils",
+  "version": "0.1.0",
+  "exports": {
+    ".": "./mod.ts",
+    "./api_client": "./api_client/api_client.ts",
+    "./workflow_ast": "./workflow_model/src/workflow_ast.ts",
+    "./workflow_file": "./workflow_model/src/workflow_file.ts"
+  },
   "tasks": {
   },
   "fmt": {
