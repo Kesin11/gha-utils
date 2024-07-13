@@ -1,6 +1,6 @@
 import { parse } from "@std/yaml";
 import { zip } from "@std/collections";
-import { FileContent } from "../../github/github.ts";
+import { FileContent } from "../../api_client/api_client.ts";
 import { JobAst, StepAst, WorkflowAst } from "./workflow_ast.ts";
 
 type Workflow = {
