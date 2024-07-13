@@ -9,8 +9,11 @@
       "jsr:@std/path@^0.225.2": "jsr:@std/path@0.225.2",
       "jsr:@std/testing@^0.225.3": "jsr:@std/testing@0.225.3",
       "npm:@octokit/plugin-retry@7.1.1": "npm:@octokit/plugin-retry@7.1.1_@octokit+core@6.1.2",
+      "npm:@octokit/plugin-retry@^7.1.1": "npm:@octokit/plugin-retry@7.1.1_@octokit+core@6.1.2",
       "npm:@octokit/plugin-throttling@9.3.0": "npm:@octokit/plugin-throttling@9.3.0_@octokit+core@6.1.2",
+      "npm:@octokit/plugin-throttling@^9.3.0": "npm:@octokit/plugin-throttling@9.3.0_@octokit+core@6.1.2",
       "npm:@octokit/rest@21.0.0": "npm:@octokit/rest@21.0.0_@octokit+core@6.1.2",
+      "npm:@octokit/rest@^21.0.0": "npm:@octokit/rest@21.0.0_@octokit+core@6.1.2",
       "npm:structured-source@4.0.0": "npm:structured-source@4.0.0",
       "npm:yaml-ast-parser@0.0.43": "npm:yaml-ast-parser@0.0.43"
     },
@@ -215,7 +218,12 @@
       "jsr:@std/encoding@^1.0.0",
       "jsr:@std/path@^0.225.2",
       "jsr:@std/testing@^0.225.3",
-      "jsr:@std/yaml@^0.224.3"
+      "jsr:@std/yaml@^0.224.3",
+      "npm:@octokit/plugin-retry@^7.1.1",
+      "npm:@octokit/plugin-throttling@^9.3.0",
+      "npm:@octokit/rest@^21.0.0",
+      "npm:structured-source@^4.0.0",
+      "npm:yaml-ast-parser@^0.0.43"
     ]
   }
 }

@@ -1,5 +1,5 @@
-import { assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
-import { describe, it } from "https://deno.land/std@0.224.0/testing/bdd.ts";
+import { assertEquals } from "@std/assert";
+import { describe, it } from "@std/testing/bdd";
 import { JobModel, StepModel, WorkflowModel } from "../src/workflow_file.ts";
 import { FileContent } from "../../github/github.ts";
 import { JobAst, StepAst } from "../src/workflow_ast.ts";

@@ -3,8 +3,8 @@ import {
   type YamlMap,
   type YAMLMapping,
   YAMLSequence,
-} from "npm:yaml-ast-parser@0.0.43";
-import { StructuredSource } from "npm:structured-source@4.0.0";
+} from "yaml-ast-parser";
+import { StructuredSource } from "structured-source";
 
 export class WorkflowAst {
   ast: YamlMap;
