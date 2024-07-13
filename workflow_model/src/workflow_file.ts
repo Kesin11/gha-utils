@@ -1,7 +1,6 @@
 import { parse } from "@std/yaml";
 import { zip } from "@std/collections";
-import { FileContent } from "../../api_client/mod.ts";
-// import { FileContent } from "gha-utils/api-client";
+import { FileContent } from "../../api_client/api_client.ts";
 import { JobAst, StepAst, WorkflowAst } from "./workflow_ast.ts";
 
 type Workflow = {
