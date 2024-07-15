@@ -2,7 +2,7 @@ import {
   safeLoad,
   type YamlMap,
   type YAMLMapping,
-  YAMLSequence,
+  type YAMLSequence,
 } from "yaml-ast-parser";
 import { StructuredSource } from "structured-source";
 
