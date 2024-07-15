@@ -1,8 +1,8 @@
 import { assertEquals } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 import { JobModel, StepModel, WorkflowModel } from "../src/workflow_file.ts";
-import { FileContent } from "../../api_client/api_client.ts";
-import { JobAst, StepAst } from "../src/workflow_ast.ts";
+import type { FileContent } from "../../api_client/api_client.ts";
+import type { JobAst, StepAst } from "../src/workflow_ast.ts";
 
 const dummyWorkflow = `name: CI
 on:

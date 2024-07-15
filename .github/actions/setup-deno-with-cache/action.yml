@@ -12,7 +12,3 @@ runs:
     - uses: denoland/setup-deno@v1
       with:
         deno-version-file: .tool-versions
-    - name: Setup Node.js for dnt
-      uses: actions/setup-node@v4
-      with:
-        node-version-file: .tool-versions

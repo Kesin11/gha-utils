@@ -1,7 +1,7 @@
 import { parse } from "@std/yaml";
 import { zip } from "@std/collections";
-import { FileContent } from "../../api_client/api_client.ts";
-import { JobAst, StepAst, WorkflowAst } from "./workflow_ast.ts";
+import type { FileContent } from "../../api_client/api_client.ts";
+import { type JobAst, type StepAst, WorkflowAst } from "./workflow_ast.ts";
 
 type Workflow = {
   name?: string;
@@ -36,6 +36,30 @@ export class WorkflowModel {
   // >  If you omit name, GitHub displays the workflow file path relative to the root of the repository.
   get name(): string {
     return this.raw.name ?? this.fileContent.raw.path;
+  }
+
+  get jobs(): JobModel[] {
+    return zip(Object.entries(this.raw.jobs), this.ast.jobAsts()).map(
+      ([[id, job], jobAst]) => new JobModel(id, job, this.fileContent, jobAst),
+    );
+  }
+}
+
+type ReusableWorkflow = {
+  name: string;
+  on: {
+    workflow_call: unknown;
+  };
+  jobs: Record<string, Job>;
+};
+export class ReusableWorkflowModel {
+  fileContent: FileContent;
+  raw: ReusableWorkflow;
+  ast: WorkflowAst; // NOTE: it's fake ast
+  constructor(fileContent: FileContent) {
+    this.fileContent = fileContent;
+    this.ast = new WorkflowAst(fileContent.content);
+    this.raw = parse(fileContent.content) as ReusableWorkflow;
   }
 
   get jobs(): JobModel[] {
@@ -134,6 +158,31 @@ export class JobModel {
   }
 }
 
+type CompositeAction = {
+  name: string;
+  description: string | undefined;
+  runs: {
+    using: "composite";
+    steps: Step[];
+  };
+};
+export class CompositeStepModel {
+  fileContent: FileContent;
+  raw: CompositeAction;
+  ast: StepAst; // NOTE: it's fake ast
+  constructor(fileContent: FileContent, fakeAst: StepAst) {
+    this.fileContent = fileContent;
+    this.raw = parse(fileContent.content) as CompositeAction;
+    this.ast = fakeAst;
+  }
+
+  get steps(): StepModel[] {
+    return this.raw.runs.steps.map((step) =>
+      new StepModel(step, this.fileContent, this.ast)
+    );
+  }
+}
+
 export type Step = {
   uses?: string;
   name?: string;
@@ -172,6 +221,11 @@ export class StepModel {
     return `${this.htmlUrl}#L${this.startLine}`;
   }
 
+  get showable(): string {
+    return this.raw.name ?? this.raw.uses ?? this.raw.run ??
+      "Error: Not showable step";
+  }
+
   static match(
     stepModels: StepModel[] | undefined,
     rawName: string,
@@ -208,46 +262,3 @@ export class StepModel {
     return false;
   }
 }
-
-// type ReusableWorkflow = {
-//   name: string;
-//   on: {
-//     workflow_call: unknown;
-//   };
-//   jobs: Record<string, Job>;
-// };
-// export class ReusableWorkflowModel {
-//   yaml: string;
-//   raw: ReusableWorkflow;
-//   constructor(rawYaml: string) {
-//     this.yaml = rawYaml;
-//     this.raw = parse(rawYaml) as ReusableWorkflow;
-//   }
-
-//   get jobs(): JobModel[] {
-//     return Object.entries(this.raw.jobs).map(([id, job]) =>
-//       new JobModel(id, job)
-//     );
-//   }
-// }
-
-// type CompositeAction = {
-//   name: string;
-//   description: string | undefined;
-//   runs: {
-//     using: "composite";
-//     steps: Step[];
-//   };
-// };
-// export class CompositeStepModel {
-//   yaml: string;
-//   raw: CompositeAction;
-//   constructor(rawYaml: string) {
-//     this.yaml = rawYaml;
-//     this.raw = parse(rawYaml) as CompositeAction;
-//   }
-
-//   get steps(): StepModel[] {
-//     return this.raw.runs.steps.map((step) => new StepModel(step));
-//   }
-// }

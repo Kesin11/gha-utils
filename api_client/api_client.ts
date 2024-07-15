@@ -1,6 +1,6 @@
 import { decodeBase64 } from "@std/encoding";
 import { chunk } from "@std/collections";
-import { Octokit, RestEndpointMethodTypes } from "@octokit/rest";
+import { Octokit, type RestEndpointMethodTypes } from "@octokit/rest";
 import { throttling } from "@octokit/plugin-throttling";
 import { retry } from "@octokit/plugin-retry";
 
@@ -50,6 +50,30 @@ export class FileContent {
     this.content = textDecoder.decode(decodeBase64(getContentResponse.content));
   }
 }
+
+type WorkflowUrl = {
+  origin: string;
+  owner: string;
+  repo: string;
+  runId: number;
+  runAttempt?: number;
+};
+
+export const parseWorkflowRunUrl = (runUrl: string): WorkflowUrl => {
+  const url = new URL(runUrl);
+  const path = url.pathname.split("/");
+  const owner = path[1];
+  const repo = path[2];
+  const runId = Number(path[5]);
+  const runAttempt = path[6] === "attempts" ? Number(path[7]) : undefined;
+  return {
+    origin: url.origin,
+    owner,
+    repo,
+    runId,
+    runAttempt: runAttempt,
+  };
+};
 
 export class Github {
   octokit: Octokit;
@@ -194,6 +218,30 @@ export class Github {
     );
     // Ignore some special workflowRuns that have not workflow file. ex: CodeQL
     return res.data.workflow_runs.filter((run) => run.event !== "dynamic");
+  }
+
+  async fetchWorkflowRun(
+    owner: string,
+    repo: string,
+    runId: number,
+    runAttempt?: number,
+  ): Promise<WorkflowRun> {
+    if (runAttempt) {
+      const res = await this.octokit.actions.getWorkflowRunAttempt({
+        owner,
+        repo,
+        run_id: runId,
+        attempt_number: runAttempt,
+      });
+      return res.data;
+    } else {
+      const res = await this.octokit.actions.getWorkflowRun({
+        owner,
+        repo,
+        run_id: runId,
+      });
+      return res.data;
+    }
   }
 
   async fetchWorkflowRunsWithCreated(
