@@ -1,9 +1,13 @@
-name: Release
+name: Release test
 on:
   push:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+        prerelease_suffix:
+          description: 'pre-release suffix. ex: 0.1.0-a1'
+          required: true
 
 jobs:
   draft_release:
@@ -17,12 +21,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  release:
+  prerelease:
     name: Release
     runs-on: ubuntu-latest
-    environment:
-        name: prod
-        url: https://jsr.io/@kesin11/gha-utils
     permissions:
       contents: write
       id-token: write
@@ -35,8 +36,6 @@ jobs:
           export TAG_NAME=${{ needs.draft_release.outputs.tag_name }}
           echo "VERSION=${TAG_NAME:1}" >> $GITHUB_ENV
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-        with:
-            ref: main
       - name: Setup git config
         run: |
           git config user.name github-actions
@@ -44,17 +43,14 @@ jobs:
 
       - name: Update deno.jsonc version and commit
         run: |
-          jq '.version = "${VERSION}"' deno.jsonc > temp.jsonc && mv temp.jsonc deno.jsonc
+          jq '.version = "${VERSION}-${PRERELEASE_SUFFIX}"' deno.jsonc > temp.jsonc && mv temp.jsonc deno.jsonc
           git add deno.jsonc
-          git commit -m "chore: release v${VERSION}"
-      - name: Publish package and git push
-        run: |
-          npx jsr publish
-          git push
-
-      - uses: release-drafter/release-drafter@3f0f87098bd6b5c5b9a36d49c41d998ea58f9348 # v6.0.0
-        id: release-drafter
-        with:
-          publish: true
+          git commit -m "chore: release v${VERSION}-${PRERELEASE_SUFFIX}"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            PRERELEASE_SUFFIX: ${{ inputs.prerelease_suffix }}
+      - name: Publish package and git push
+        # run: |
+        #   npx jsr publish
+        #   git push
+        run: |
+          npx jsr publish --dry-run
