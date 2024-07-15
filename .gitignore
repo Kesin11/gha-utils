@@ -131,3 +131,6 @@ dist
 
 # vscode
 .vscode/launch.json
+
+# For debug
+repos
