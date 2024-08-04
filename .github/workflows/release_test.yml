@@ -2,7 +2,7 @@ name: Release test
 on:
   push:
     branches:
-      - main
+      - publish_jsr
   workflow_dispatch:
     inputs:
         prerelease_suffix:
