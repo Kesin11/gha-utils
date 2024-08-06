@@ -7,6 +7,19 @@
     "./workflow_ast": "./workflow_model/src/workflow_ast.ts",
     "./workflow_file": "./workflow_model/src/workflow_file.ts"
   },
+  "publish": {
+    "include": [
+      "README.md",
+      "LICENSE",
+      "mod.ts",
+      "api_client/**/*.ts",
+      "workflow_model/**/*.ts"
+    ],
+    "exclude": [
+      "**/tests/**/*",
+      "**/*.test.ts"
+    ]
+  },
   "tasks": {
   },
   "fmt": {
