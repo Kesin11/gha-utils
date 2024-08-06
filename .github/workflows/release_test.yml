@@ -45,7 +45,7 @@ jobs:
 
       - name: Update deno.jsonc version and commit
         run: |
-          jq '.version = "${VERSION}-${PRERELEASE_SUFFIX}"' deno.jsonc > temp.jsonc && mv temp.jsonc deno.jsonc
+          jq '.version = "${{ env.VERSION }}-${{ env.PRERELEASE_SUFFIX }}"' deno.jsonc > temp.jsonc && mv temp.jsonc deno.jsonc
           git add deno.jsonc
           git commit -m "chore: release v${VERSION}-${PRERELEASE_SUFFIX}"
         env:
