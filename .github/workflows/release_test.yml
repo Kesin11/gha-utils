@@ -51,8 +51,6 @@ jobs:
         env:
             PRERELEASE_SUFFIX: ${{ inputs.prerelease_suffix }}
       - name: Publish package and git push
-        # run: |
-        #   npx jsr publish
-        #   git push
         run: |
-          npx jsr publish --dry-run
+          npx jsr publish
+          git push origin HEAD
