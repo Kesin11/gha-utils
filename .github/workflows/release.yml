@@ -46,13 +46,13 @@ jobs:
 
       - name: Update deno.jsonc version and commit
         run: |
-          jq '.version = "${VERSION}"' deno.jsonc > temp.jsonc && mv temp.jsonc deno.jsonc
+          jq '.version = "${{ env.VERSION }}"' deno.jsonc > temp.jsonc && mv temp.jsonc deno.jsonc
           git add deno.jsonc
           git commit -m "chore: release v${VERSION}"
       - name: Publish package and git push
         run: |
           npx jsr publish
-          git push
+          git push origin HEAD
 
       - uses: release-drafter/release-drafter@3f0f87098bd6b5c5b9a36d49c41d998ea58f9348 # v6.0.0
         id: release-drafter
