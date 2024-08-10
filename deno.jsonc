@@ -20,8 +20,7 @@
       "**/*.test.ts"
     ]
   },
-  "tasks": {
-  },
+  "tasks": {},
   "fmt": {
     "proseWrap": "preserve"
   },
