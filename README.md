@@ -1,4 +1,4 @@
-# gha-utils [![JSR](https://jsr.io/badges/@kesin11/gha-utils)](https://jsr.io/@<scope>/<package>)
+# gha-utils [![JSR](https://jsr.io/badges/@kesin11/gha-utils)](https://jsr.io/@kesin11/gha-utils)
 
 Deno Util libraries for GitHub Actions.
 
