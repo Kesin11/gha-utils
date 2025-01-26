@@ -193,6 +193,7 @@ export class Github {
           repo: run.repository.name,
           run_id: run.id,
           attempt_number: run.run_attempt ?? 1,
+          per_page: 100, // MAX per_page num
         });
       });
       const chunkResults = (await Promise.all(promises)).map((res) =>
