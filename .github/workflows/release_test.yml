@@ -2,9 +2,9 @@ name: Release test
 on:
   workflow_dispatch:
     inputs:
-        prerelease_suffix:
-          description: 'pre-release suffix. ex: 0.1.0-a1'
-          required: true
+      prerelease_suffix:
+        description: "pre-release suffix. ex: 0.1.0-a1"
+        required: true
 
 jobs:
   draft_release:
@@ -46,7 +46,7 @@ jobs:
           git add deno.jsonc
           git commit -m "chore: release v${VERSION}-${PRERELEASE_SUFFIX}"
         env:
-            PRERELEASE_SUFFIX: ${{ inputs.prerelease_suffix }}
+          PRERELEASE_SUFFIX: ${{ inputs.prerelease_suffix }}
       - name: Publish package and git push
         run: |
           npx jsr publish

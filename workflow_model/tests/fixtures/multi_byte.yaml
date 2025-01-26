@@ -2,7 +2,7 @@ name: マルチバイト文字が含まれていてもstartLineが正しく取�
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
   workflow_dispatch:
 
@@ -44,7 +44,7 @@ jobs:
       - uses: denoland/setup-deno@v1
         with:
           deno-version: v${{ steps.tool-versions.outputs.deno }}
-      
+
       - run: deno task my_repo_test
         env:
           GITHUB_TOKEN: ${{ secrets.MY_PAT }}
