@@ -175,10 +175,8 @@ export class Github {
     return workflowRunsUsages;
   }
 
-  // NOTE: This is a cacheable API; the run_id and attempt_number pairs ensure consistent results.
-  // NOTE: このリクエスト数はworkflowRunsの数とイコールなので100を余裕で超えてしまう
-  // 本来はFetch APIなどhttpクライアント側でリクエスト数制限をかけるべきだが、Denoだと方法が分からない
-  // chunk数で並列数を制限してキャッシュを活用することでAPIリクエスト数を抑える
+  // NOTE: This function might have something wrong. A bug occurred in the actions-timeline.
+  // see: https://github.com/Kesin11/actions-timeline/issues/186
   async fetchWorkflowJobs(
     workflowRuns: WorkflowRun[],
     chunkSize = 20,
@@ -202,6 +200,20 @@ export class Github {
       workflowJobs.push(...chunkResults.flat());
     }
     return workflowJobs;
+  }
+
+  async fetchWorkflowRunJobs(
+    workflowRun: WorkflowRun,
+  ): Promise<WorkflowJobs> {
+    const workflowJobs = await this.octokit.actions
+      .listJobsForWorkflowRunAttempt({
+        owner: workflowRun.repository.owner.login,
+        repo: workflowRun.repository.name,
+        run_id: workflowRun.id,
+        attempt_number: workflowRun.run_attempt ?? 1,
+        per_page: 100, // MAX per_page num
+      });
+    return workflowJobs.data.jobs;
   }
 
   async fetchWorkflowRuns(
