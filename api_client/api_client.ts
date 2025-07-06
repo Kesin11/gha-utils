@@ -238,8 +238,9 @@ export class Github {
 
   /**
    * Fetches workflow run usage data for multiple workflow runs
-   * 
-   * Note: This API is not supported on GitHub Enterprise Server
+   *
+   * Note: This API is not supported on GitHub Enterprise Server.
+   *
    * Uses chunking to limit concurrent requests and reduce API usage
    * 
    * @param workflowRuns - Array of workflow runs
