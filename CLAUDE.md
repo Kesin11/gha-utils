@@ -9,6 +9,7 @@ A Deno utility library providing GitHub Actions API client and workflow models. 
 ## Development Commands
 
 ### Core Development Commands
+
 ```bash
 # Run tests
 deno test
@@ -24,6 +25,7 @@ deno check **/*.ts
 ```
 
 ### Documentation Commands
+
 ```bash
 # Generate documentation
 deno task doc
@@ -35,6 +37,7 @@ deno task doc:lint
 ## Code Architecture
 
 ### Main Components
+
 - **api_client**: GitHub Actions API client
   - `Github` class: API rate limiting, caching, retry functionality
   - Fetch workflow runs, jobs, and usage data
@@ -47,11 +50,13 @@ deno task doc:lint
   - `WorkflowAst`: YAML AST parsing and source code line number management
 
 ### Dependencies
+
 - **GitHub API**: @octokit/rest, @octokit/plugin-throttling, @octokit/plugin-retry
 - **YAML Processing**: @std/yaml, yaml-ast-parser
 - **Deno Standard Library**: @std/assert, @std/collections, @std/encoding, @std/path, @std/testing
 
 ### Testing Approach
+
 - Uses Deno standard testing library (@std/testing)
 - BDD style (describe/it)
 - Test files:
@@ -60,11 +65,13 @@ deno task doc:lint
   - `workflow_model/tests/workflow_ast.test.ts`
 
 ### Environment Requirements
+
 - **GITHUB_TOKEN**: Required via environment variable or constructor
 - **API Limits**: Chunk processing to limit request count
 - **Caching**: Content fetch caching functionality
 
 ### Export Structure
+
 - Modular structure (api_client, workflow_ast, workflow_file)
 - `mod.ts` serves as entry point
 - Published on JSR

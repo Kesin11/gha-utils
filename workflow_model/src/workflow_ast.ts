@@ -8,10 +8,10 @@ import { StructuredSource } from "structured-source";
 
 /**
  * YAML AST wrapper for GitHub Actions workflow files
- * 
+ *
  * Provides access to YAML AST nodes and line number tracking
  * for workflow structure elements
- * 
+ *
  * @example
  * ```typescript
  * const ast = new WorkflowAst(yamlContent);
@@ -24,7 +24,7 @@ export class WorkflowAst {
   ast: YamlMap;
   /** Structured source for line number tracking */
   src: StructuredSource;
-  
+
   /**
    * Creates a new WorkflowAst instance
    * @param yaml - YAML content string
@@ -37,7 +37,7 @@ export class WorkflowAst {
   /**
    * Gets AST nodes for all jobs in the workflow
    * @returns Array of job AST nodes
-   * 
+   *
    * @example
    * ```typescript
    * const jobAsts = workflowAst.jobAsts();
@@ -53,10 +53,10 @@ export class WorkflowAst {
 
 /**
  * YAML AST wrapper for GitHub Actions job definitions
- * 
+ *
  * Provides access to job AST nodes and line number tracking
  * for job structure elements
- * 
+ *
  * @example
  * ```typescript
  * const jobAst = new JobAst(mappingNode, structuredSource);
@@ -69,7 +69,7 @@ export class JobAst {
   ast: YAMLMapping;
   /** Structured source for line number tracking */
   src: StructuredSource;
-  
+
   /**
    * Creates a new JobAst instance
    * @param ast - YAML mapping node for the job
@@ -83,7 +83,7 @@ export class JobAst {
   /**
    * Gets AST nodes for all steps in the job
    * @returns Array of step AST nodes, or undefined if job has no steps (e.g., reusable workflow)
-   * 
+   *
    * @example
    * ```typescript
    * const stepAsts = jobAst.stepAsts();
@@ -105,7 +105,7 @@ export class JobAst {
   /**
    * Gets the starting line number of the job in the workflow file
    * @returns Line number (1-based)
-   * 
+   *
    * @example
    * ```typescript
    * const lineNumber = jobAst.startLine();
@@ -122,9 +122,9 @@ export class JobAst {
 
 /**
  * YAML AST wrapper for GitHub Actions step definitions
- * 
+ *
  * Provides access to step AST nodes and line number tracking
- * 
+ *
  * @example
  * ```typescript
  * const stepAst = new StepAst(mappingNode, structuredSource);
@@ -136,7 +136,7 @@ export class StepAst {
   ast: YAMLMapping;
   /** Structured source for line number tracking */
   src: StructuredSource;
-  
+
   /**
    * Creates a new StepAst instance
    * @param ast - YAML mapping node for the step
@@ -150,7 +150,7 @@ export class StepAst {
   /**
    * Gets the starting line number of the step in the workflow file
    * @returns Line number (1-based)
-   * 
+   *
    * @example
    * ```typescript
    * const lineNumber = stepAst.startLine();

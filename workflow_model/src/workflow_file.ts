@@ -13,7 +13,7 @@ export type Workflow = {
 };
 /**
  * Model representing a GitHub Actions workflow file
- * 
+ *
  * @example
  * ```typescript
  * const workflow = new WorkflowModel(fileContent);
@@ -30,7 +30,7 @@ export class WorkflowModel {
   ast: WorkflowAst;
   /** GitHub HTML URL for the workflow file */
   htmlUrl?: string;
-  
+
   /**
    * Creates a new WorkflowModel instance
    * @param fileContent - GitHub API file content response
@@ -44,13 +44,13 @@ export class WorkflowModel {
 
   /**
    * Creates a map of workflow names to WorkflowModel instances
-   * 
+   *
    * Note: Assumes WorkflowModel is identical across all runs
    * If duplicate names exist, later values will overwrite earlier ones
-   * 
+   *
    * @param workflowModels - Array of workflow models
    * @returns Map with workflow names as keys and models as values
-   * 
+   *
    * @example
    * ```typescript
    * const models = [workflow1, workflow2];
@@ -66,10 +66,10 @@ export class WorkflowModel {
 
   /**
    * Gets the workflow name
-   * 
+   *
    * If name is not defined in the workflow, returns the file path
    * as per GitHub Actions behavior
-   * 
+   *
    * @see https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#name
    */
   get name(): string {
@@ -97,10 +97,10 @@ export type ReusableWorkflow = {
 };
 /**
  * Represents a reusable workflow model that can be called from other workflows
- * 
+ *
  * A reusable workflow is a workflow that can be called from other workflows,
  * enabling code reuse and modular workflow design.
- * 
+ *
  * @example
  * ```typescript
  * const reusableWorkflow = new ReusableWorkflowModel(fileContent);
@@ -115,10 +115,10 @@ export class ReusableWorkflowModel {
   raw: ReusableWorkflow;
   /** The AST representation of the workflow (note: it's a fake AST) */
   ast: WorkflowAst; // NOTE: it's fake ast
-  
+
   /**
    * Creates a new ReusableWorkflowModel instance
-   * 
+   *
    * @param fileContent - The file content containing the workflow definition
    */
   constructor(fileContent: FileContent) {
@@ -129,7 +129,7 @@ export class ReusableWorkflowModel {
 
   /**
    * Gets all jobs in the reusable workflow as JobModel instances
-   * 
+   *
    * @returns Array of job models representing all jobs in the workflow
    */
   get jobs(): JobModel[] {
@@ -153,10 +153,10 @@ export type Job = {
 };
 /**
  * Represents a job within a GitHub Actions workflow
- * 
+ *
  * A job is a set of steps that execute on the same runner. Jobs can run in parallel
  * or sequentially depending on dependencies.
- * 
+ *
  * @example
  * ```typescript
  * const job = new JobModel("build", jobObj, fileContent, jobAst);
@@ -179,10 +179,10 @@ export class JobModel {
   ast: JobAst;
   /** The HTML URL to the workflow file */
   htmlUrl?: string;
-  
+
   /**
    * Creates a new JobModel instance
-   * 
+   *
    * @param id - The unique identifier for the job
    * @param obj - The raw job object
    * @param fileContent - The file content containing the job definition
@@ -204,7 +204,7 @@ export class JobModel {
 
   /**
    * Gets the starting line number of the job in the workflow file
-   * 
+   *
    * @returns The line number where the job starts
    */
   get startLine(): number {
@@ -213,7 +213,7 @@ export class JobModel {
 
   /**
    * Gets the HTML URL with line number anchor pointing to the job definition
-   * 
+   *
    * @returns The HTML URL with line anchor (e.g., "https://github.com/owner/repo/blob/main/.github/workflows/ci.yml#L15")
    */
   get htmlUrlWithLine(): string {
@@ -222,7 +222,7 @@ export class JobModel {
 
   /**
    * Gets all steps in the job as StepModel instances
-   * 
+   *
    * @returns Array of step models, or empty array if no steps are defined
    */
   get steps(): StepModel[] {
@@ -236,15 +236,15 @@ export class JobModel {
 
   /**
    * Finds a job model that matches the given raw name
-   * 
+   *
    * This method handles matching by job ID, job name, and matrix job variations.
    * For matrix jobs, it attempts to match partial names and handles GitHub's
    * matrix job naming conventions.
-   * 
+   *
    * @param jobModels - Array of job models to search through
    * @param rawName - The raw name to match against
    * @returns The matching job model, or undefined if no match found
-   * 
+   *
    * @example
    * ```typescript
    * const matchedJob = JobModel.match(jobs, "build (ubuntu-latest)");
@@ -280,9 +280,9 @@ export class JobModel {
 
   /**
    * Checks if this job uses a matrix strategy
-   * 
+   *
    * @returns True if the job has a matrix strategy defined, false otherwise
-   * 
+   *
    * @example
    * ```typescript
    * if (job.isMatrix()) {
@@ -297,9 +297,9 @@ export class JobModel {
 
   /**
    * Checks if this job is a reusable workflow call
-   * 
+   *
    * @returns True if the job calls a reusable workflow, false otherwise
-   * 
+   *
    * @example
    * ```typescript
    * if (job.isReusable()) {
@@ -328,11 +328,11 @@ export type CompositeAction = {
 };
 /**
  * Represents a composite action model containing multiple steps
- * 
+ *
  * A composite action is a custom action that combines multiple workflow steps
  * into a single reusable unit. It allows you to create complex actions that
  * can be shared across workflows.
- * 
+ *
  * @example
  * ```typescript
  * const compositeAction = new CompositeStepModel(fileContent, fakeAst);
@@ -347,10 +347,10 @@ export class CompositeStepModel {
   raw: CompositeAction;
   /** The AST representation of the step (note: it's a fake AST) */
   ast: StepAst; // NOTE: it's fake ast
-  
+
   /**
    * Creates a new CompositeStepModel instance
-   * 
+   *
    * @param fileContent - The file content containing the composite action definition
    * @param fakeAst - The fake AST representation for the step
    */
@@ -362,7 +362,7 @@ export class CompositeStepModel {
 
   /**
    * Gets all steps in the composite action as StepModel instances
-   * 
+   *
    * @returns Array of step models representing all steps in the composite action
    */
   get steps(): StepModel[] {
@@ -382,10 +382,10 @@ export type Step = {
 };
 /**
  * Represents a single step within a GitHub Actions job
- * 
+ *
  * A step is an individual task that can run commands, use actions, or run scripts.
  * Steps are executed in order within a job.
- * 
+ *
  * @example
  * ```typescript
  * const step = new StepModel(stepObj, fileContent, stepAst);
@@ -403,9 +403,9 @@ export class StepModel {
   raw: Step;
   /** The display name of the step */
   name: string;
-  /** 
+  /**
    * The action reference if the step uses an action
-   * 
+   *
    * For example, "actions/checkout@v4" becomes { action: "actions/checkout", ref: "v4" }
    */
   uses?: { // actions/checkout@v4 => { action: actions/checkout, ref: v4 }
@@ -418,10 +418,10 @@ export class StepModel {
   ast: StepAst;
   /** The HTML URL to the workflow file */
   htmlUrl?: string;
-  
+
   /**
    * Creates a new StepModel instance
-   * 
+   *
    * @param obj - The raw step object
    * @param fileContent - The file content containing the step definition
    * @param ast - The AST representation of the step
@@ -442,7 +442,7 @@ export class StepModel {
 
   /**
    * Gets the starting line number of the step in the workflow file
-   * 
+   *
    * @returns The line number where the step starts
    */
   get startLine(): number {
@@ -451,7 +451,7 @@ export class StepModel {
 
   /**
    * Gets the HTML URL with line number anchor pointing to the step definition
-   * 
+   *
    * @returns The HTML URL with line anchor (e.g., "https://github.com/owner/repo/blob/main/.github/workflows/ci.yml#L25")
    */
   get htmlUrlWithLine(): string {
@@ -460,9 +460,9 @@ export class StepModel {
 
   /**
    * Gets a displayable string representation of the step
-   * 
+   *
    * Returns the step name if available, otherwise the action used, run command, or an error message.
-   * 
+   *
    * @returns A string suitable for display purposes
    */
   get showable(): string {
@@ -472,14 +472,14 @@ export class StepModel {
 
   /**
    * Finds a step model that matches the given raw name
-   * 
+   *
    * This method handles matching by step name, action name, and various GitHub Actions
    * naming conventions including prefixes like "Pre", "Post", "Run", etc.
-   * 
+   *
    * @param stepModels - Array of step models to search through
    * @param rawName - The raw name to match against
    * @returns The matching step model, or undefined if no match found
-   * 
+   *
    * @example
    * ```typescript
    * const matchedStep = StepModel.match(steps, "Run tests");
@@ -514,9 +514,9 @@ export class StepModel {
 
   /**
    * Checks if this step uses a composite action
-   * 
+   *
    * @returns True if the step uses a composite action, false otherwise
-   * 
+   *
    * @example
    * ```typescript
    * if (step.isComposite()) {
