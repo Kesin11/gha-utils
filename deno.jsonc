@@ -20,7 +20,10 @@
       "**/*.test.ts"
     ]
   },
-  "tasks": {},
+  "tasks": {
+    "doc": "deno doc --name=@kesin11/gha-utils api_client/**/*.ts workflow_model/**/*.ts",
+    "doc:lint": "deno doc --lint --name=@kesin11/gha-utils api_client/**/*.ts workflow_model/**/*.ts"
+  },
   "fmt": {
     "proseWrap": "preserve"
   },

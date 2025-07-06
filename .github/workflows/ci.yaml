@@ -21,3 +21,5 @@ jobs:
         run: deno lint
       - id: test
         run: deno test -A
+      - id: doc_lint
+        run: deno task doc:lint
