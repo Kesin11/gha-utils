@@ -420,5 +420,30 @@ describe(StepModel.name, () => {
       const actual = StepModel.match(stepModels, "Echo");
       assertEquals(actual, namedRunStep);
     });
+
+    describe("Local composite action", () => {
+      const compositeStep = new StepModel(
+        { uses: "./.github/actions/setup-deno-with-cache" },
+        fileContentDummy,
+        dummyStepAst,
+      );
+      const compositeStepModels = [compositeStep];
+
+      it("Matches local composite action step", () => {
+        const actual = StepModel.match(
+          compositeStepModels,
+          "Run ./.github/actions/setup-deno-with-cache",
+        );
+        assertEquals(actual, compositeStep);
+      });
+
+      it("Matches local composite action step with extra / prefix from GitHub API", () => {
+        const actual = StepModel.match(
+          compositeStepModels,
+          "Run /./.github/actions/setup-deno-with-cache",
+        );
+        assertEquals(actual, compositeStep);
+      });
+    });
   });
 });
