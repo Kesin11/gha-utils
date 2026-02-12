@@ -73,7 +73,7 @@ export class FileContent {
     this.raw = getContentResponse;
     const textDecoder = new TextDecoder();
     // GitHub API returns base64 with newlines (RFC 2045), strip them before decoding
-    const base64 = getContentResponse.content.replace(/\n/g, "");
+    const base64 = getContentResponse.content.replace(/[\r\n]/g, "");
     this.content = textDecoder.decode(decodeBase64(base64));
   }
 }
@@ -621,7 +621,7 @@ export class Github {
       })
       .catch((error) => {
         console.warn(
-          `fetchContent not found: ref: ${params.ref}, path: ${params.owner}/${params.repo}/${params.path}`,
+          `fetchContent failed: ref: ${params.ref}, path: ${params.owner}/${params.repo}/${params.path}`,
           error,
         );
         return undefined;
