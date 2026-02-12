@@ -1,6 +1,6 @@
 import { assertEquals } from "@std/assert";
 import { beforeEach, describe, it } from "@std/testing/bdd";
-import { Github, parseWorkflowRunUrl } from "./api_client.ts";
+import { FileContent, Github, parseWorkflowRunUrl } from "./api_client.ts";
 
 describe(Github.name, () => {
   describe("Set token at constructor", () => {
@@ -64,6 +64,45 @@ describe(Github.name, () => {
       const github = new Github({ host: undefined, _workaroundDenoTest: true });
       assertEquals(github.baseUrl, "https://api.github.com");
     });
+  });
+});
+
+describe(FileContent.name, () => {
+  const dummyResponse = {
+    type: "file" as const,
+    size: 11,
+    name: "test.txt",
+    path: "test.txt",
+    content: "",
+    sha: "abc123",
+    url: "https://api.github.com/repos/owner/repo/contents/test.txt",
+    git_url: null,
+    html_url: null,
+    download_url: null,
+  };
+
+  it("Decodes base64 content without newlines", () => {
+    const fc = new FileContent({
+      ...dummyResponse,
+      content: "aGVsbG8gd29ybGQ=",
+    });
+    assertEquals(fc.content, "hello world");
+  });
+
+  it("Decodes base64 content with LF newlines (RFC 2045)", () => {
+    const fc = new FileContent({
+      ...dummyResponse,
+      content: "aGVsbG8g\nd29ybGQ=\n",
+    });
+    assertEquals(fc.content, "hello world");
+  });
+
+  it("Decodes base64 content with CRLF newlines (RFC 2045)", () => {
+    const fc = new FileContent({
+      ...dummyResponse,
+      content: "aGVsbG8g\r\nd29ybGQ=\r\n",
+    });
+    assertEquals(fc.content, "hello world");
   });
 });
 

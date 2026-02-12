@@ -501,10 +501,14 @@ export class StepModel {
     // nameもusesも`Pre `, `Post `のprefixが付くstepが存在する
     // さらにusesの場合はPre Run, Post Runのprefixになる
     const name = rawName.replace(/^(Pre Run |Post Run |Pre |Run |Post )/, "");
-    const action = name.split("@")[0];
+    // Normalize: GitHub API sometimes adds extra "/" before "./" for local actions
+    const normalizedName = name.replace(/^\/\.\//, "./");
+    const action = normalizedName.split("@")[0];
     for (const stepModel of stepModels) {
       // case: rawName comes from step.name or step.run
-      if (stepModel.name === name) return stepModel;
+      if (stepModel.name === name || stepModel.name === normalizedName) {
+        return stepModel;
+      }
       // case: rawName comes from step.uses
       if (stepModel.uses?.action === action) return stepModel;
     }
