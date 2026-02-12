@@ -134,3 +134,6 @@ dist
 
 # For debug
 repos
+
+# Claude Code
+.claude/settings.local.json
