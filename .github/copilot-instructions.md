@@ -8,11 +8,15 @@ A Deno utility library providing GitHub Actions API client and workflow models. 
 
 ## Development Commands
 
-### Core Development Commands
-
 ```bash
-# Run tests
+# Run all tests
 deno test
+
+# Run a single test file
+deno test api_client/api_client.test.ts
+
+# Run tests matching a filter (describe/it name)
+deno test --filter "WorkflowModel"
 
 # Format code
 deno fmt
@@ -22,56 +26,38 @@ deno lint
 
 # Type check
 deno check **/*.ts
-```
 
-### Documentation Commands
-
-```bash
-# Generate documentation
-deno task doc
-
-# Lint documentation
+# Lint documentation (checks JSDoc exports)
 deno task doc:lint
 ```
 
+### CI Checks
+
+CI runs: `deno fmt --check`, `deno lint`, `deno test -A`, `deno task doc:lint`
+
 ## Code Architecture
 
-### Main Components
+### Layered Structure
 
-- **api_client**: GitHub Actions API client
-  - `Github` class: API rate limiting, caching, retry functionality
-  - Fetch workflow runs, jobs, and usage data
-  - GitHub Enterprise Server support
+The library has two independent modules with a clear layered design:
 
-- **workflow_model**: GitHub Actions workflow models
-  - `WorkflowModel`: Structured representation of workflow files
-  - `JobModel`: Structured representation of jobs
-  - `StepModel`: Structured representation of steps
-  - `WorkflowAst`: YAML AST parsing and source code line number management
+**api_client/** — GitHub Actions API client
 
-### Dependencies
+- `Github` class wraps Octokit with rate limiting, retry, and content caching
+- Fetches workflow runs, jobs, usage data, cache info, and workflow YAML files
+- Supports GitHub Enterprise Server (GHES) via host option
+- Requires `GITHUB_TOKEN` via environment variable or constructor option
 
-- **GitHub API**: @octokit/rest, @octokit/plugin-throttling, @octokit/plugin-retry
-- **YAML Processing**: @std/yaml, yaml-ast-parser
-- **Deno Standard Library**: @std/assert, @std/collections, @std/encoding, @std/path, @std/testing
+**workflow_model/** — Workflow file parsing and models
 
-### Testing Approach
-
-- Uses Deno standard testing library (@std/testing)
-- BDD style (describe/it)
-- Test files:
-  - `api_client/api_client.test.ts`
-  - `workflow_model/tests/workflow_file.test.ts`
-  - `workflow_model/tests/workflow_ast.test.ts`
-
-### Environment Requirements
-
-- **GITHUB_TOKEN**: Required via environment variable or constructor
-- **API Limits**: Chunk processing to limit request count
-- **Caching**: Content fetch caching functionality
+- Two parallel parsing strategies for the same YAML:
+  - `WorkflowModel` / `JobModel` / `StepModel` (in `src/workflow_file.ts`): Parse YAML via @std/yaml into structured data models for querying job/step properties, matrix config, reusable workflow detection, and name matching
+  - `WorkflowAst` / `JobAst` / `StepAst` (in `src/workflow_ast.ts`): Parse YAML via yaml-ast-parser + structured-source for **source line number tracking** — used to map jobs/steps back to their line positions in the original YAML
 
 ### Export Structure
 
-- Modular structure (api_client, workflow_ast, workflow_file)
-- `mod.ts` serves as entry point
-- Published on JSR
+Published on JSR with modular imports — users can import from the root (`@kesin11/gha-utils`) or specific subpaths (`@kesin11/gha-utils/api_client`, `@kesin11/gha-utils/workflow_file`, `@kesin11/gha-utils/workflow_ast`).
+
+### Testing
+
+BDD style (describe/it) using @std/testing. Tests use inline dummy YAML objects and fixture files in `workflow_model/tests/fixtures/`.
