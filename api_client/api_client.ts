@@ -1,40 +1,56 @@
 import { decodeBase64 } from "@std/encoding";
 import { chunk } from "@std/collections";
-import { Octokit, type RestEndpointMethodTypes } from "@octokit/rest";
+import { Octokit } from "@octokit/rest";
 import { throttling } from "@octokit/plugin-throttling";
 import { retry } from "@octokit/plugin-retry";
 
 /** GitHub repository response data */
-export type RepositoryResponse =
-  RestEndpointMethodTypes["repos"]["get"]["response"]["data"];
+export type RepositoryResponse = {
+  name: string;
+  owner: {
+    login: string;
+    [key: string]: unknown;
+  };
+  [key: string]: unknown;
+};
 
 /** GitHub workflow run data */
-export type WorkflowRun =
-  RestEndpointMethodTypes["actions"]["getWorkflowRunAttempt"]["response"][
-    "data"
-  ];
+export type WorkflowRun = {
+  event: string;
+  head_sha: string;
+  id: number;
+  path: string;
+  repository: RepositoryResponse;
+  run_attempt?: number;
+  [key: string]: unknown;
+};
 
 /** GitHub workflow jobs data */
-export type WorkflowJobs =
-  RestEndpointMethodTypes["actions"]["listJobsForWorkflowRunAttempt"][
-    "response"
-  ][
-    "data"
-  ]["jobs"];
+export type WorkflowJobs = Array<{
+  [key: string]: unknown;
+  steps?: Array<{
+    [key: string]: unknown;
+  }>;
+}>;
 
 /** GitHub workflow run usage data */
-export type WorkflowRunUsage =
-  RestEndpointMethodTypes["actions"]["getWorkflowRunUsage"]["response"]["data"];
+export type WorkflowRunUsage = {
+  [key: string]: unknown;
+};
 
 /** GitHub Actions cache usage data */
-export type ActionsCacheUsage =
-  RestEndpointMethodTypes["actions"]["getActionsCacheUsage"]["response"][
-    "data"
-  ];
+export type ActionsCacheUsage = {
+  [key: string]: unknown;
+};
 
 /** GitHub Actions cache list data */
-export type ActionsCacheList =
-  RestEndpointMethodTypes["actions"]["getActionsCacheList"]["response"]["data"];
+export type ActionsCacheList = {
+  actions_caches: Array<{
+    [key: string]: unknown;
+  }>;
+  total_count: number;
+  [key: string]: unknown;
+};
 
 /** GitHub file content response data */
 export type FileContentResponse = {
@@ -79,7 +95,7 @@ export class FileContent {
 }
 
 /** Parsed GitHub workflow run URL components */
-type WorkflowUrl = {
+export type WorkflowRunUrl = {
   origin: string;
   owner: string;
   repo: string;
@@ -102,7 +118,7 @@ type WorkflowUrl = {
  * console.log(parsed.runId); // 123456789
  * ```
  */
-export const parseWorkflowRunUrl = (runUrl: string): WorkflowUrl => {
+export function parseWorkflowRunUrl(runUrl: string): WorkflowRunUrl {
   const url = new URL(runUrl);
   const path = url.pathname.split("/");
   const owner = path[1];
@@ -114,9 +130,9 @@ export const parseWorkflowRunUrl = (runUrl: string): WorkflowUrl => {
     owner,
     repo,
     runId,
-    runAttempt: runAttempt,
+    runAttempt,
   };
-};
+}
 
 /**
  * GitHub API client with rate limiting, caching, and retry functionality
@@ -135,7 +151,7 @@ export const parseWorkflowRunUrl = (runUrl: string): WorkflowUrl => {
  */
 export class Github {
   /** Octokit instance for GitHub API calls */
-  octokit: Octokit;
+  private readonly octokit: Octokit;
   /** GitHub token for authentication */
   token?: string;
   /** Base URL for GitHub API */
