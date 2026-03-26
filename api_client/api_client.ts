@@ -605,8 +605,9 @@ export class Github {
 export type RepositoryResponse = Awaited<ReturnType<Github["fetchRepository"]>>;
 
 /** GitHub workflow run data */
-export type WorkflowRun =
-  Awaited<ReturnType<Github["fetchWorkflowRuns"]>>[number];
+export type WorkflowRun = Awaited<
+  ReturnType<Github["fetchWorkflowRuns"]>
+>[number];
 
 /** GitHub workflow jobs data */
 export type WorkflowJobs = Awaited<ReturnType<Github["fetchWorkflowRunJobs"]>>;
