@@ -1,41 +1,8 @@
 import { decodeBase64 } from "@std/encoding";
 import { chunk } from "@std/collections";
-import { Octokit, type RestEndpointMethodTypes } from "@octokit/rest";
-export type { Octokit, RestEndpointMethodTypes } from "@octokit/rest";
+import { Octokit } from "@octokit/rest";
 import { throttling } from "@octokit/plugin-throttling";
 import { retry } from "@octokit/plugin-retry";
-
-/** GitHub repository response data */
-export type RepositoryResponse =
-  RestEndpointMethodTypes["repos"]["get"]["response"]["data"];
-
-/** GitHub workflow run data */
-export type WorkflowRun =
-  RestEndpointMethodTypes["actions"]["getWorkflowRunAttempt"]["response"][
-    "data"
-  ];
-
-/** GitHub workflow jobs data */
-export type WorkflowJobs =
-  RestEndpointMethodTypes["actions"]["listJobsForWorkflowRunAttempt"][
-    "response"
-  ][
-    "data"
-  ]["jobs"];
-
-/** GitHub workflow run usage data */
-export type WorkflowRunUsage =
-  RestEndpointMethodTypes["actions"]["getWorkflowRunUsage"]["response"]["data"];
-
-/** GitHub Actions cache usage data */
-export type ActionsCacheUsage =
-  RestEndpointMethodTypes["actions"]["getActionsCacheUsage"]["response"][
-    "data"
-  ];
-
-/** GitHub Actions cache list data */
-export type ActionsCacheList =
-  RestEndpointMethodTypes["actions"]["getActionsCacheList"]["response"]["data"];
 
 /** GitHub file content response data */
 export type FileContentResponse = {
@@ -136,7 +103,7 @@ export const parseWorkflowRunUrl = (runUrl: string): WorkflowUrl => {
  */
 export class Github {
   /** Octokit instance for GitHub API calls */
-  octokit: Octokit;
+  private octokit: Octokit;
   /** GitHub token for authentication */
   token?: string;
   /** Base URL for GitHub API */
@@ -231,7 +198,7 @@ export class Github {
   async fetchRepository(
     owner: string,
     repo: string,
-  ): Promise<RepositoryResponse> {
+  ) {
     const res = await this.octokit.repos.get({
       owner,
       repo,
@@ -259,12 +226,14 @@ export class Github {
   async fetchWorkflowRunUsages(
     workflowRuns: WorkflowRun[],
     chunkSize = 20,
-  ): Promise<WorkflowRunUsage[] | undefined> {
+  ) {
     // NOTE: GHES does not support this API
     if (this.isGHES) return undefined;
 
     const workflowRunsChunks = chunk(workflowRuns, chunkSize);
-    const workflowRunsUsages: WorkflowRunUsage[] = [];
+    const workflowRunsUsages = [] as Awaited<
+      ReturnType<typeof this.octokit.actions.getWorkflowRunUsage>
+    >["data"][];
 
     for (const chunk of workflowRunsChunks) {
       const promises = chunk.map((run) => {
@@ -299,8 +268,10 @@ export class Github {
   async fetchWorkflowJobs(
     workflowRuns: WorkflowRun[],
     chunkSize = 20,
-  ): Promise<WorkflowJobs> {
-    const workflowJobs: WorkflowJobs = [];
+  ) {
+    const workflowJobs = [] as Awaited<
+      ReturnType<typeof this.octokit.actions.listJobsForWorkflowRunAttempt>
+    >["data"]["jobs"];
     const workflowJobsChunks = chunk(workflowRuns, chunkSize);
 
     for (const chunk of workflowJobsChunks) {
@@ -335,7 +306,7 @@ export class Github {
    */
   async fetchWorkflowRunJobs(
     workflowRun: WorkflowRun,
-  ): Promise<WorkflowJobs> {
+  ) {
     const workflowJobs = await this.octokit.actions
       .listJobsForWorkflowRunAttempt({
         owner: workflowRun.repository.owner.login,
@@ -365,7 +336,7 @@ export class Github {
     owner: string,
     repo: string,
     branch?: string,
-  ): Promise<WorkflowRun[]> {
+  ) {
     const res = await this.octokit.actions.listWorkflowRunsForRepo(
       {
         owner,
@@ -398,7 +369,7 @@ export class Github {
     repo: string,
     runId: number,
     runAttempt?: number,
-  ): Promise<WorkflowRun> {
+  ) {
     if (runAttempt) {
       const res = await this.octokit.actions.getWorkflowRunAttempt({
         owner,
@@ -438,7 +409,7 @@ export class Github {
     repo: string,
     created: string,
     branch?: string,
-  ): Promise<WorkflowRun[]> {
+  ) {
     const workflowRuns = await this.octokit.paginate(
       this.octokit.actions.listWorkflowRunsForRepo,
       {
@@ -469,7 +440,7 @@ export class Github {
   async fetchActionsCacheUsage(
     owner: string,
     repo: string,
-  ): Promise<ActionsCacheUsage> {
+  ) {
     const res = await this.octokit.actions.getActionsCacheUsage({
       owner,
       repo,
@@ -495,7 +466,7 @@ export class Github {
     owner: string,
     repo: string,
     perPage = 100, // MAX per_page num
-  ): Promise<ActionsCacheList> {
+  ) {
     const res = await this.octokit.actions.getActionsCacheList({
       owner,
       repo,
@@ -629,3 +600,28 @@ export class Github {
       });
   }
 }
+
+/** GitHub repository response data */
+export type RepositoryResponse = Awaited<ReturnType<Github["fetchRepository"]>>;
+
+/** GitHub workflow run data */
+export type WorkflowRun =
+  Awaited<ReturnType<Github["fetchWorkflowRuns"]>>[number];
+
+/** GitHub workflow jobs data */
+export type WorkflowJobs = Awaited<ReturnType<Github["fetchWorkflowRunJobs"]>>;
+
+/** GitHub workflow run usage data */
+export type WorkflowRunUsage = NonNullable<
+  Awaited<ReturnType<Github["fetchWorkflowRunUsages"]>>
+>[number];
+
+/** GitHub Actions cache usage data */
+export type ActionsCacheUsage = Awaited<
+  ReturnType<Github["fetchActionsCacheUsage"]>
+>;
+
+/** GitHub Actions cache list data */
+export type ActionsCacheList = Awaited<
+  ReturnType<Github["fetchActionsCacheList"]>
+>;

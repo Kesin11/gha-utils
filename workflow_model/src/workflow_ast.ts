@@ -5,8 +5,6 @@ import {
   type YAMLSequence,
 } from "yaml-ast-parser";
 import { StructuredSource } from "structured-source";
-export type { YamlMap, YAMLMapping } from "yaml-ast-parser";
-export type { StructuredSource } from "structured-source";
 
 /**
  * YAML AST wrapper for GitHub Actions workflow files
@@ -23,9 +21,9 @@ export type { StructuredSource } from "structured-source";
  */
 export class WorkflowAst {
   /** YAML AST root node */
-  ast: YamlMap;
+  private ast: YamlMap;
   /** Structured source for line number tracking */
-  src: StructuredSource;
+  private src: StructuredSource;
 
   /**
    * Creates a new WorkflowAst instance
@@ -68,9 +66,9 @@ export class WorkflowAst {
  */
 export class JobAst {
   /** YAML mapping node for the job */
-  ast: YAMLMapping;
+  private ast: YAMLMapping;
   /** Structured source for line number tracking */
-  src: StructuredSource;
+  private src: StructuredSource;
 
   /**
    * Creates a new JobAst instance
@@ -135,9 +133,9 @@ export class JobAst {
  */
 export class StepAst {
   /** YAML mapping node for the step */
-  ast: YAMLMapping;
+  private ast: YAMLMapping;
   /** Structured source for line number tracking */
-  src: StructuredSource;
+  private src: StructuredSource;
 
   /**
    * Creates a new StepAst instance
