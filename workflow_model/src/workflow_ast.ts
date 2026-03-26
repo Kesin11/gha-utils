@@ -5,6 +5,8 @@ import {
   type YAMLSequence,
 } from "yaml-ast-parser";
 import { StructuredSource } from "structured-source";
+export type { YamlMap, YAMLMapping } from "yaml-ast-parser";
+export type { StructuredSource } from "structured-source";
 
 /**
  * YAML AST wrapper for GitHub Actions workflow files

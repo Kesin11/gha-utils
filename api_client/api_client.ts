@@ -1,6 +1,7 @@
 import { decodeBase64 } from "@std/encoding";
 import { chunk } from "@std/collections";
 import { Octokit, type RestEndpointMethodTypes } from "@octokit/rest";
+export type { Octokit, RestEndpointMethodTypes } from "@octokit/rest";
 import { throttling } from "@octokit/plugin-throttling";
 import { retry } from "@octokit/plugin-retry";
 
