@@ -21,9 +21,9 @@ import { StructuredSource } from "structured-source";
  */
 export class WorkflowAst {
   /** YAML AST root node */
-  ast: YamlMap;
+  private readonly ast: YamlMap;
   /** Structured source for line number tracking */
-  src: StructuredSource;
+  private readonly src: StructuredSource;
 
   /**
    * Creates a new WorkflowAst instance
@@ -66,9 +66,9 @@ export class WorkflowAst {
  */
 export class JobAst {
   /** YAML mapping node for the job */
-  ast: YAMLMapping;
+  private readonly ast: YAMLMapping;
   /** Structured source for line number tracking */
-  src: StructuredSource;
+  private readonly src: StructuredSource;
 
   /**
    * Creates a new JobAst instance
@@ -133,9 +133,9 @@ export class JobAst {
  */
 export class StepAst {
   /** YAML mapping node for the step */
-  ast: YAMLMapping;
+  private readonly ast: YAMLMapping;
   /** Structured source for line number tracking */
-  src: StructuredSource;
+  private readonly src: StructuredSource;
 
   /**
    * Creates a new StepAst instance
