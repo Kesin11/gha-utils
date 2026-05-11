@@ -1,7 +1,7 @@
 import { decodeBase64 } from "@std/encoding";
 import { chunk } from "@std/collections";
 import { Octokit } from "@octokit/rest";
-import { throttling } from "@octokit/plugin-throttling";
+import { throttling, type ThrottlingOptions } from "@octokit/plugin-throttling";
 import { retry } from "@octokit/plugin-retry";
 
 /** GitHub file content response data */
@@ -259,28 +259,29 @@ export class Github {
       // It is unclear whether this is a false positive, but since throttling is not used in tests, a workaround is introduced to avoid adding the plugin.
       ? Octokit.plugin(retry)
       : Octokit.plugin(throttling, retry);
+    const throttleOptions: ThrottlingOptions = {
+      onRateLimit: (retryAfter, options, _octokit, retryCount) => {
+        this.octokitClient.log.warn(
+          `Request quota exhausted for request ${options.method} ${options.url}`,
+        );
+        // Retry twice after hitting a rate limit error, then give up
+        if (retryCount <= 2) {
+          console.warn(`Retrying after ${retryAfter} seconds!`);
+          return true;
+        }
+      },
+      onSecondaryRateLimit: (_retryAfter, options, _octokit, _retryCount) => {
+        // does not retry, only logs a warning
+        console.warn(
+          `Abuse detected for request ${options.method} ${options.url}`,
+        );
+      },
+    };
     this.octokitClient = new MyOctokit({
       auth: this.token,
       baseUrl: this.baseUrl,
       log: options?.debug ? console : undefined,
-      throttle: {
-        onRateLimit: (retryAfter, options, _octokit, retryCount) => {
-          this.octokitClient.log.warn(
-            `Request quota exhausted for request ${options.method} ${options.url}`,
-          );
-          // Retry twice after hitting a rate limit error, then give up
-          if (retryCount <= 2) {
-            console.warn(`Retrying after ${retryAfter} seconds!`);
-            return true;
-          }
-        },
-        onSecondaryRateLimit: (_retryAfter, options, _octokit, _retryCount) => {
-          // does not retry, only logs a warning
-          console.warn(
-            `Abuse detected for request ${options.method} ${options.url}`,
-          );
-        },
-      },
+      throttle: throttleOptions,
     });
   }
 
