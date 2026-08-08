@@ -12,7 +12,7 @@
     "jsr:@std/path@^1.1.5": "1.1.6",
     "jsr:@std/path@^1.1.6": "1.1.6",
     "jsr:@std/testing@^1.0.20": "1.0.20",
-    "jsr:@std/yaml@^1.1.2": "1.1.2",
+    "jsr:@std/yaml@^1.2.0": "1.2.0",
     "npm:@octokit/plugin-retry@^8.1.1": "8.1.1_@octokit+core@7.0.7",
     "npm:@octokit/plugin-throttling@^11.0.5": "11.0.5_@octokit+core@7.0.7",
     "npm:@octokit/rest@^22.0.1": "22.0.1",
@@ -66,8 +66,8 @@
         "jsr:@std/path@^1.1.6"
       ]
     },
-    "@std/yaml@1.1.2": {
-      "integrity": "de612653c036749ba2044165e316f52412b0f0698afffb7ee80b5331d6d2abae"
+    "@std/yaml@1.2.0": {
+      "integrity": "20beb41e4983ba3437dbefac62b14061ab058e8a187596f19d28ff9035f6e6cf"
     }
   },
   "npm": {
@@ -254,7 +254,7 @@
       "jsr:@std/encoding@^1.0.11",
       "jsr:@std/path@^1.1.6",
       "jsr:@std/testing@^1.0.20",
-      "jsr:@std/yaml@^1.1.2",
+      "jsr:@std/yaml@^1.2.0",
       "npm:@octokit/plugin-retry@^8.1.1",
       "npm:@octokit/plugin-throttling@^11.0.5",
       "npm:@octokit/rest@^22.0.1",
